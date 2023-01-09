@@ -1,5 +1,6 @@
 package com.app.jumpingmind.ui.beers
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -16,31 +17,23 @@ class BeersViewModel @Inject constructor(
     private val beersRepository: BeersRepository
 ) : ViewModel() {
 
-    private val _uiStateFlow = MutableStateFlow<UIState>(UIState.Loading(true))
+    private val _uiStateFlow = MutableStateFlow<PagingData<Beer>>(PagingData.empty())
     val uiState = _uiStateFlow.asStateFlow()
 
     init {
         getBeers()
     }
 
-    private fun getBeers() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getBeers() {
         viewModelScope.launch {
 
             beersRepository.getBeers()
                 .cachedIn(viewModelScope)
                 .onEach {
-                    _uiStateFlow.value = UIState.List(it)
-                }
-                .catch { exception ->
-                    _uiStateFlow.value = UIState.Error(exception.message ?: "Error")
+                    _uiStateFlow.value = it
                 }
                 .collect()
         }
-    }
-
-    sealed class UIState {
-        class List(val list: PagingData<Beer>) : UIState()
-        class Loading(val isLoading: Boolean) : UIState()
-        class Error(val message: String) : UIState()
     }
 }

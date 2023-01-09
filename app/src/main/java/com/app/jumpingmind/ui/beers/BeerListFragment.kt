@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.jumpingmind.databinding.LayoutBeerListBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,12 +41,27 @@ class BeerListFragment : Fragment() {
 
         beersViewModel.uiState
             .flowWithLifecycle(lifecycle)
-            .onEach { state ->
-                when (state) {
-                    is BeersViewModel.UIState.List -> beersListAdapter.submitData(state.list)
-
-                }
+            .onEach {
+                beersListAdapter.submitData(it)
             }
             .launchIn(lifecycleScope)
+
+        beersListAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.Loading ||
+                loadState.append is LoadState.Loading)
+                binding.progressBar.isVisible = true
+            else {
+                binding.progressBar.isVisible = false
+                val errorState = when {
+                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                    loadState.prepend is LoadState.Error ->  loadState.prepend as LoadState.Error
+                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    Toast.makeText(requireContext(), it.error.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 }

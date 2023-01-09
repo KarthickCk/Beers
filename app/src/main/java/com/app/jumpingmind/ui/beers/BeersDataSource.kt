@@ -33,8 +33,8 @@ class BeersDataSource(
                 )
             }
         } catch (e: Exception) {
-            LoadResult.Page(
-                emptyList(), null, null
+            LoadResult.Error(
+                e
             )
         }
 

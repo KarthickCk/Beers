@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.app.jumpingmind.R
 import com.app.jumpingmind.databinding.LayoutBeerItemBinding
 import com.app.jumpingmind.domain.model.Beer
 import com.app.jumpingmind.extension.loadUrl
@@ -41,7 +42,7 @@ class BeersListAdapter :
         fun bind(beer: Beer?) {
             beer?.let {
                 binding.beerName.text = beer.name
-                binding.beerImage.loadUrl(beer.image_url)
+                binding.beerImage.loadUrl(beer.image_url, R.drawable.ic_launcher_foreground)
                 binding.beerDescription.text = beer.description
             }
         }
