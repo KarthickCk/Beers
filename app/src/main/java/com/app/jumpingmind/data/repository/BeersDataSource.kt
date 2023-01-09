@@ -1,4 +1,4 @@
-package com.app.jumpingmind.ui.beers
+package com.app.jumpingmind.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
