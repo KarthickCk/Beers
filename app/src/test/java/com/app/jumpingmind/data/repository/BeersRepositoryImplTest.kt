@@ -2,7 +2,8 @@ package com.app.jumpingmind.data.repository
 
 import androidx.paging.PagingData
 import com.app.jumpingmind.data.api.BeersApi
-import com.app.jumpingmind.domain.model.Beer
+import com.app.jumpingmind.data.room.BeerInfo
+import com.app.jumpingmind.data.room.BeersDAO
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -16,6 +17,8 @@ class BeersRepositoryImplTest {
 
     @MockK
     lateinit var beersApi: BeersApi
+    @MockK
+    lateinit var beersDAO: BeersDAO
 
     private lateinit var beersRepositoryImpl: BeersRepositoryImpl
 
@@ -23,19 +26,19 @@ class BeersRepositoryImplTest {
     fun setUp() {
         MockKAnnotations.init(this)
 
-        beersRepositoryImpl = BeersRepositoryImpl(beersApi)
+        beersRepositoryImpl = BeersRepositoryImpl(beersApi, beersDAO)
     }
 
     @Test
     fun `test beers list`() =  runBlockingTest {
-        val result = mutableListOf<PagingData<Beer>>()
+        val result = mutableListOf<PagingData<BeerInfo>>()
 
         coEvery { beersApi.getBeers(1) } returns listOf()
 
         val job = launch {
             beersRepositoryImpl.getBeers().toList(result)
         }
-        assert(result[0] is PagingData<Beer>)
+        assert(result[0] is PagingData<BeerInfo>)
 
         job.cancel()
     }

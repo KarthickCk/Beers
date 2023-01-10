@@ -2,6 +2,7 @@ package com.app.jumpingmind.ui.beers
 
 import androidx.paging.PagingData
 import com.app.jumpingmind.MainCoroutineRule
+import com.app.jumpingmind.data.room.BeerInfo
 import com.app.jumpingmind.domain.model.Beer
 import com.app.jumpingmind.domain.repository.BeersRepository
 import io.mockk.MockKAnnotations
@@ -40,7 +41,7 @@ class BeersViewModelTest {
     @Test
     fun `test get beers`() = runBlockingTest {
 
-        val result = mutableListOf<PagingData<Beer>>()
+        val result = mutableListOf<PagingData<BeerInfo>>()
 
         coEvery { beersRepository.getBeers() } returns flow { emit(PagingData.from(listOf())) }
 
@@ -50,7 +51,7 @@ class BeersViewModelTest {
 
         beersViewModel.getBeers()
 
-        assert(result[0] is PagingData<Beer>)
+        assert(result[0] is PagingData<BeerInfo>)
 
         job.cancel()
     }

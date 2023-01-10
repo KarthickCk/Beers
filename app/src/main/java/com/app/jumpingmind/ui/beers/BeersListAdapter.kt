@@ -6,19 +6,19 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.app.jumpingmind.R
+import com.app.jumpingmind.data.room.BeerInfo
 import com.app.jumpingmind.databinding.LayoutBeerItemBinding
-import com.app.jumpingmind.domain.model.Beer
 import com.app.jumpingmind.extension.loadUrl
 
 class BeersListAdapter :
-    PagingDataAdapter<Beer, BeersListAdapter.BeerViewHolder>(BeerDiffCallBack()) {
+    PagingDataAdapter<BeerInfo, BeersListAdapter.BeerViewHolder>(BeerDiffCallBack()) {
 
-    class BeerDiffCallBack : DiffUtil.ItemCallback<Beer>() {
-        override fun areItemsTheSame(oldItem: Beer, newItem: Beer): Boolean {
+    class BeerDiffCallBack : DiffUtil.ItemCallback<BeerInfo>() {
+        override fun areItemsTheSame(oldItem: BeerInfo, newItem: BeerInfo): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Beer, newItem: Beer): Boolean {
+        override fun areContentsTheSame(oldItem: BeerInfo, newItem: BeerInfo): Boolean {
             return oldItem == newItem
         }
     }
@@ -39,10 +39,10 @@ class BeersListAdapter :
         private val binding: LayoutBeerItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(beer: Beer?) {
+        fun bind(beer: BeerInfo?) {
             beer?.let {
                 binding.beerName.text = beer.name
-                binding.beerImage.loadUrl(beer.image_url, R.drawable.ic_launcher_foreground)
+                binding.beerImage.loadUrl(beer.imageUrl, R.drawable.ic_launcher_foreground)
                 binding.beerDescription.text = beer.description
             }
         }

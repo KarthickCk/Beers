@@ -2,6 +2,7 @@ package com.app.jumpingmind.data.repository
 
 import androidx.paging.PagingSource
 import com.app.jumpingmind.data.api.BeersApi
+import com.app.jumpingmind.data.room.BeersDAO
 import com.app.jumpingmind.domain.model.Beer
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -15,20 +16,23 @@ class BeersDataSourceTest {
 
     @MockK
     lateinit var beersApi: BeersApi
+    @MockK
+    lateinit var beersDAO: BeersDAO
 
     private lateinit var beersDataSource: BeersDataSource
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        beersDataSource = BeersDataSource(beersApi, 12)
+        beersDataSource = BeersDataSource(beersApi, beersDAO, 12)
     }
 
     @Test
     fun `test load success`() = runBlockingTest {
 
         coEvery { beersApi.getBeers(1) } returns listOf()
-
+        coEvery { beersDAO.getPagedList(12, 0) } returns listOf()
+        coEvery { beersDAO.insertAll(emptyList()) } returns Unit
         val expected = PagingSource.LoadResult.Page(
             data = emptyList(),
             prevKey = null,
@@ -52,7 +56,8 @@ class BeersDataSourceTest {
         val e = Exception()
 
         coEvery { beersApi.getBeers(1) } throws e
-
+        coEvery { beersDAO.getPagedList(12, 0) } returns listOf()
+        coEvery { beersDAO.insertAll(emptyList()) } returns Unit
         val expected = PagingSource.LoadResult.Error<Int, Beer>(
             e
         )
