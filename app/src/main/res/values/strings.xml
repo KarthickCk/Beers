@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Beers</string>
+    <string name="beer_app_description">Beers list application</string>
+    <string name="btn_proceed">Proceed</string>
 </resources>
